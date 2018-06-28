@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<title>Getting data from a sensor</title>
+	<meta name="description" content="Simple Chat Room">
+	<meta name="author" content="Tomomi Imura  @girlie_mac">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/lib/eon.css" />
+	<style>
+	* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+
+	body {
+		font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", "Roboto Light", "Segoe UI Web Light", "Segoe UI Light", "Segoe UI Web Regular", "Segoe UI", Helvetica, Arial, sans-serif; 
+		margin: 1em;
+		background: -webkit-radial-gradient(center, circle, rgba(255,255,255,.35), rgba(255,255,255,0) 20%, rgba(255,255,255,0) 21%), -webkit-radial-gradient(center, circle, rgba(0,0,0,.2), rgba(0,0,0,0) 20%, rgba(0,0,0,0) 21%), -webkit-radial-gradient(center, circle farthest-corner, #f0f0f0, #c0c0c0);
+		background: -moz-radial-gradient(center, circle, rgba(255,255,255,.35), rgba(255,255,255,0) 20%, rgba(255,255,255,0) 21%), -webkit-radial-gradient(center, circle, rgba(0,0,0,.2), rgba(0,0,0,0) 20%, rgba(0,0,0,0) 21%), -webkit-radial-gradient(center, circle farthest-corner, #f0f0f0, #c0c0c0);
+		background: -ms-radial-gradient(center, circle, rgba(255,255,255,.35), rgba(255,255,255,0) 20%, rgba(255,255,255,0) 21%), -webkit-radial-gradient(center, circle, rgba(0,0,0,.2), rgba(0,0,0,0) 20%, rgba(0,0,0,0) 21%), -webkit-radial-gradient(center, circle farthest-corner, #f0f0f0, #c0c0c0);
+		background: -o-radial-gradient(center, circle, rgba(255,255,255,.35), rgba(255,255,255,0) 20%, rgba(255,255,255,0) 21%), -webkit-radial-gradient(center, circle, rgba(0,0,0,.2), rgba(0,0,0,0) 20%, rgba(0,0,0,0) 21%), -webkit-radial-gradient(center, circle farthest-corner, #f0f0f0, #c0c0c0);
+		background: radial-gradient(center, circle, rgba(255,255,255,.35), rgba(255,255,255,0) 20%, rgba(255,255,255,0) 21%), -webkit-radial-gradient(center, circle, rgba(0,0,0,.2), rgba(0,0,0,0) 20%, rgba(0,0,0,0) 21%), -webkit-radial-gradient(center, circle farthest-corner, #f0f0f0, #c0c0c0);
+		background-size: 10px 10px, 10px 10px, 100% 100%;
+		background-position: 1px 1px, 0px 0px, center center;
+	}
+	
+	
+	
+	header {
+		margin-bottom: 2em;
+	}
+	h1, h2, h3 {
+		margin: 0;
+		text-rendering: optimizeLegibility;
+	}
+	h1 {
+		font-size: 2.4em;
+		line-height: 1.4em;
+		text-transform: lowercase;
+		font-weight: normal;
+		text-shadow: 1px 2px 0 #fff;
+	}
+	h2 {
+		font-size: 1em;
+		text-transform: uppercase;
+		font-weight: normal;
+		text-shadow: 1px 1px 0 #fff;
+	}
+	footer {
+		position: absolute;
+		bottom: 2em;
+	}
+	#main {
+		margin: 4em auto;
+		text-align: center;
+		position: relative;
+	}
+	button{
+		display: inline;
+		font-size: 2em;
+		border-radius: 10px;
+		padding: .3em 1em;
+		position: relative;
+		top: 50%;
+	}
+	#output { 
+		font-size: 8em;
+		font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;
+		text-align: center;
+		margin: 1em;
+		padding: .25em;
+		color: #fff;
+		text-shadow: rgba(0,0,0,.5) 0 -1px 0, rgba(0,0,10,.6) 0 2px 1px;
+		background: green;
+		border-radius: 20px;
+
+		box-shadow: 
+			inset hsla(0,0%,15%, .5) 8px  8px 20px 10px, 
+			inset hsla(0,0%,0%, .3) 0 -1px 0px 7px,
+			inset hsla(0,0%,100%,.7) 0  2px 1px 7px, 
+			hsla(0,0%, 0%,.15) 0 -5px 6px 4px,
+			hsla(0,0%,100%,.5) 0  5px 6px 4px; 
+	}
+	#output.occupied {
+		background: red;
+	}
+	#dht {
+		font-size: 2.5em;
+		font-weight: bold;
+	}
+	#door { 
+		font-size: 4em;
+		font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;
+		text-align: center;
+		margin: 1em;
+		padding: .25em;
+		color: #fff;
+		text-shadow: rgba(0,0,0,.5) 0 -1px 0, rgba(0,0,10,.6) 0 2px 1px;
+		background: green;
+		border-radius: 20px;
+
+		box-shadow: 
+			inset hsla(0,0%,15%, .5) 8px  8px 20px 10px, 
+			inset hsla(0,0%,0%, .3) 0 -1px 0px 7px,
+			inset hsla(0,0%,100%,.7) 0  2px 1px 7px, 
+			hsla(0,0%, 0%,.15) 0 -5px 6px 4px,
+			hsla(0,0%,100%,.5) 0  5px 6px 4px; 
+	}
+	#door.occupied {
+		background: blue;
+	}
+	</style>
+</head>
+
+<body>
+	<header>
+		<h1>Control from Web Interface</h1>
+	</header>
+
+	<section id="main" role="main">
+		<button class="lighton">Lights on!</button>		<button class="lightoff">Lights off!</button>
+		<button class="fanon">Fan on!</button>
+		<button class="fanoff">Fan off!</button>
+		<button class="dooropen">Door Open!</button>
+		<button class="doorclose">Door Close!</button>
+	</section>
+
+	<section id="main" role="main">
+		<p id="presence"></p>
+		<div id="output">
+			Vacant
+		</div>
+	</section>
+	
+	<section id="main" role="main">
+		<p>
+			<span id='dht'>N/A</span>
+		</p>
+	</section>
+	
+	<section id="main" role="main">
+		<p id="maindoor"></p>
+		<div id="door">
+			No one is at the door
+		</div>
+	</section>
+	
+
+	<!-- including the latest PubNub JavaScript SDK -->
+	<script src="http://cdn.pubnub.com/pubnub-3.16.4.min.js"></script>
+	<script>
+
+(function() {
+
+	// DOM
+	var lighton = document.querySelector('button.lighton'); 
+	var lightoff = document.querySelector('button.lightoff');
+	var fanon = document.querySelector('button.fanon');
+	var fanoff = document.querySelector('button.fanoff');
+	var dooropen = document.querySelector('button.dooropen');
+	var doorclose = document.querySelector('button.doorclose');
+	var output = document.getElementById('output'); 
+	var presence = document.getElementById('presence');
+	var temp = document.getElementById('test');
+	// This is the channel name you are subscribing in remote-led.py
+	var channel = 'home';
+	var channel1 = 'irmotion';
+	var door = document.getElementById('door'); 
+	var maindoor = document.getElementById('maindoor');
+	
+	
+	var ultra = PUBNUB.init({
+		publish_key   :'pub-c-e621b8e2-bdcb-4d07-afca-f7f477cc05fc',
+	  subscribe_key :'sub-c-643cb84e-af34-11e6-936d-02ee2ddab7fe'
+	});
+	
+	function fanON() {
+		ultra.publish({
+		  channel : channel, 
+		  message : {sw: 2}
+		});
+	}
+	
+	function fanOFF() {
+		ultra.publish({
+		  channel : channel, 
+		  message : {sw: 3}
+		});
+	}
+	function lightsON() {
+		ultra.publish({
+		  channel : channel, 
+		  message : {sw: 0}
+		});
+	}
+	
+	function lightsOFF() {
+		ultra.publish({
+		  channel : channel, 
+		  message : {sw: 1}
+		});
+	}
+
+	function doorOpen() {
+		ultra.publish({
+		  channel : channel, 
+		  message : {sw: 4}
+		});
+	}
+
+	function doorClose() {
+		ultra.publish({
+		  channel : channel, 
+		  message : {sw: 5}
+		});
+	}
+	
+	ultra.subscribe({
+		channel  : 'rangefinder',
+		callback : function(m) { 
+			
+			if(m.motion === 1) {
+				output.className = 'occupied';
+				output.textContent = 'Occupied';
+				
+			} else {
+				output.className = '';
+				output.textContent = 'Vacant';
+			}
+			
+			document.getElementById('dht').textContent = m.read;
+			
+			if(m.distance <= 4) {
+				door.className = 'occupied';
+				door.textContent = 'Someone is at the door';
+				
+			} else {
+				door.className = '';
+				door.textContent = 'No one is at the door';
+			}
+		}
+	});
+	
+    // Click event
+	lighton.addEventListener('click', lightsON);
+	lightoff.addEventListener('click', lightsOFF);
+	fanon.addEventListener('click', fanON);
+	fanoff.addEventListener('click', fanOFF);
+	dooropen.addEventListener('click', doorOpen);
+	doorclose.addEventListener('click', doorClose);
+	
+})();
+	</script>
+	
+</body>
+</html>
